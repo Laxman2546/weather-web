@@ -6,19 +6,21 @@ import thunderstormsImg from "../assets/thunderstoms.jpg";
 import fogImg from "../assets/fog.jpg";
 import cloudyImg from "../assets/cloudy.jpg";
 import sunsetImg from "../assets/sunset.jpg";
+import "../App.css";
 
 const HomePage = () => {
   const [weatherData, setWeatherData] = useState([]);
   const [backgroundImg, setBackgroundImg] = useState("");
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
 
-  const getWeather = async () => {
+  const getWeather = async (query) => {
     setLoading(true);
     try {
       const response =
         await axios.get(`http://api.weatherapi.com/v1/forecast.json?key=${
           import.meta.env.VITE_WEATHER_KEY
-        }&q=delhi&days=7&aqi=no&alerts=no
+        }&q=${query || "hyderabad"}&days=7&aqi=no&alerts=no
 `);
       console.log(response.data);
       const time = response.data.location.localtime;
@@ -43,10 +45,34 @@ const HomePage = () => {
     const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
     return `${formattedHours}:${formattedMinutes} ${ampm}`;
   };
-
+  const getDay = (time) => {
+    const date = new Date(time);
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const day = days[date.getDay()];
+    return day;
+  };
   useEffect(() => {
     getWeather();
   }, []);
+
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      if (query) {
+        getWeather(query);
+      }
+    }, 3000);
+    return () => {
+      clearInterval(debounce);
+    };
+  }, [query]);
 
   const getWeatherImage = (weather, localtime) => {
     const hour = new Date(localtime).getHours();
@@ -108,7 +134,7 @@ const HomePage = () => {
         </div>
       ) : (
         <div
-          className="w-full min-h-screen  flex flex-col relative"
+          className="w-full min-h-screen  flex flex-col relative overflow-hidden"
           style={{
             backgroundImage: `url(${backgroundImg})`,
             backgroundSize: "cover",
@@ -116,23 +142,38 @@ const HomePage = () => {
             backgroundPosition: "center",
           }}
         >
-          <div className="w-full min-h-screen bg-black opacity-30 absolute blur-2xl "></div>
+          <div className="w-full min-h-screen bg-black opacity-40 absolute blur-2xl "></div>
           <div className="z-50 p-5 md:p-12">
-            <nav className="flex flex-row mb-12 ">
+            <nav className="flex flex-row items-center justify-between mb-12  pr-12">
               <p className="text-white font-bold text-lg shadow-2xl">
                 Weather App
               </p>
+              <div className="w-2/5 relative">
+                <input
+                  type="text"
+                  onChange={(e) => setQuery(e.target.value)}
+                  value={query}
+                  className="glass-card relative p-3 placeholder-white min-w-full outline-none border-none shadow-2xl text-white"
+                  placeholder="Search City"
+                />
+              </div>
+              <p></p>
             </nav>
-            <div className="flex flex-col  md:flex-row min-h-[calc(100vh-250px)] ">
+            <div className="flex flex-col justify-between gap-5 pr-12 md:flex-row min-h-[calc(100vh-250px)] ">
               <div className="flex flex-col p-3 md:p-12  justify-end min-h-full gap-3 ">
                 <div className="flex flex-row items-start text-white font-bold">
                   <h1 className="text-8xl">
                     {Math.round(weatherData.current.temp_c)}
                   </h1>
                   <span className="text-2xl mt-3">°C</span>
+                  <img
+                    src={weatherData.current.condition.icon}
+                    alt="weathericon"
+                    className="mt-9"
+                  />
                 </div>
                 <div className="flex flex-row items-start text-white font-bold">
-                  <p className="text-5xl text-center ">
+                  <p className="text-5xl text-center text-nowrap">
                     {weatherData.location.name}
                   </p>
                 </div>
@@ -146,7 +187,92 @@ const HomePage = () => {
                   </p>
                 </div>
               </div>
-              <div></div>
+              <div className="flex flex-col justify-start items-center min-h-full w-full ml-2 md:ml-12 gap-8">
+                <div className="glass-card p-5 rounded-2xl flex flex-col w-full md:w-1/2">
+                  <div className="flex justify-between items-center mb-2">
+                    <h1 className="text-white text-lg font-semibold tracking-wide">
+                      Today's Forecast
+                    </h1>
+                  </div>
+                  <div className="w-full h-[2px] bg-white/40 mb-3"></div>
+
+                  <div className="flex flex-row gap-6 overflow-x-auto no-scrollbar py-2">
+                    {weatherData.forecast.forecastday[0].hour.map(
+                      (day, index) => (
+                        <div
+                          key={index}
+                          className="flex flex-col items-center "
+                        >
+                          <p className="text-xs text-white/80 whitespace-nowrap">
+                            {getTime(day.time)}
+                          </p>
+                          <img
+                            src={day.condition.icon}
+                            alt="weathericon"
+                            className="w-10 h-10 my-1"
+                          />
+                          <p className="text-sm font-medium text-white">
+                            {day.temp_c}°C
+                          </p>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+                <div className="glass-card p-5 rounded-2xl flex flex-col w-full md:w-1/2">
+                  <div className="flex justify-between items-center mb-2">
+                    <h1 className="text-white text-lg font-semibold tracking-wide">
+                      6-Day Forecast
+                    </h1>
+                  </div>
+                  <div className="w-full h-[2px] bg-white/40 mb-3"></div>
+
+                  <div className="flex flex-col gap-3 overflow-y-auto no-scrollbar">
+                    {weatherData.forecast.forecastday
+                      .slice(1)
+                      .map((day, index) => (
+                        <div
+                          key={index}
+                          className="flex flex-row items-center justify-between gap-4"
+                        >
+                          {" "}
+                          <div className="flex items-center gap-3">
+                            <p className="text-sm text-white/90 font-medium w-10">
+                              {getDay(day.date).slice(0, 3)}
+                            </p>
+                            <img
+                              src={day?.day?.condition?.icon}
+                              alt="weathericon"
+                              className="w-8 h-8"
+                            />
+                          </div>
+                          <div className="flex-1 flex items-center gap-2">
+                            <p className="text-xs text-white/70">
+                              {day?.day.mintemp_c}°
+                            </p>
+                            <div className="relative w-full h-[4px] bg-white/20 rounded-full">
+                              <div
+                                className="absolute h-[4px] rounded-full bg-gradient-to-r from-blue-400 to-orange-300"
+                                style={{
+                                  left: "10%",
+                                  right: "10%",
+                                  width: `${
+                                    ((day.day.maxtemp_c - day.day.mintemp_c) /
+                                      50) *
+                                    100
+                                  }%`,
+                                }}
+                              ></div>
+                            </div>
+                            <p className="text-xs text-white/70">
+                              {day?.day.maxtemp_c}°
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
