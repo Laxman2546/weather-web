@@ -20,7 +20,7 @@ const HomePage = () => {
     setLoading(true);
     try {
       const response =
-        await axios.get(`http://api.weatherapi.com/v1/forecast.json?key=${
+        await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=${
           import.meta.env.VITE_WEATHER_KEY
         }&q=${query || "hyderabad"}&days=7&aqi=no&alerts=no
 `);
