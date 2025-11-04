@@ -7,6 +7,7 @@ import fogImg from "../assets/fog.jpg";
 import cloudyImg from "../assets/cloudy.jpg";
 import sunsetImg from "../assets/sunset.jpg";
 import loader from "../assets/loader.gif";
+import sad from "../assets/sad.png";
 import "../App.css";
 
 const HomePage = () => {
@@ -140,7 +141,7 @@ const HomePage = () => {
       ) : (
         <>
           <div
-            className="w-full min-h-screen  flex flex-col relative overflow-hidden"
+            className="w-full min-h-screen   flex flex-col relative overflow-hidden"
             style={{
               backgroundImage: `url(${backgroundImg})`,
               backgroundSize: "cover",
@@ -168,8 +169,9 @@ const HomePage = () => {
               </nav>
               <div className="flex flex-col   md:flex-row min-h-[calc(100vh-250px)] ">
                 {error ? (
-                  <div>
-                    <h1 className="text-2xl text-white font-semibold text-center">
+                  <div className="flex flex-col items-center justify-center min-h-full w-full">
+                    <img src={sad} alt="sad" className="w-24 h-24" />
+                    <h1 className="text-2xl text-white font-bold text-center ">
                       Location not found
                     </h1>
                   </div>
@@ -188,7 +190,7 @@ const HomePage = () => {
                         />
                       </div>
                       <div className="flex flex-row items-start text-white font-bold">
-                        <p className="text-5xl text-center text-wrap">
+                        <p className="text-5xl text-start text-wrap">
                           {weatherData.location.name}
                         </p>
                       </div>
@@ -202,7 +204,7 @@ const HomePage = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col justify-start items-center min-h-full w-3/4  mr-2   gap-8">
+                    <div className="flex flex-col justify-start items-center min-h-full w-4/5  mr-2   gap-8">
                       <div className="glass-card p-5 rounded-2xl flex flex-col w-full md:w-1/2">
                         <div className="flex justify-between items-center mb-2">
                           <h1 className="text-white text-lg font-semibold tracking-wide">
