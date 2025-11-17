@@ -152,11 +152,11 @@ const HomePage = () => {
             <div className="w-full min-h-screen bg-black opacity-40 absolute blur-2xl "></div>
 
             <div className="z-50 p-5 md:p-12">
-              <nav className="flex flex-row items-center justify-between mb-12  pr-12">
+              <nav className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12  pr-12 gap-5">
                 <p className="text-white font-bold text-lg shadow-2xl">
                   Weather App
                 </p>
-                <div className="w-2/5 relative">
+                <div className="w-full md:w-2/5 relative">
                   <input
                     type="text"
                     onChange={(e) => setQuery(e.target.value)}
