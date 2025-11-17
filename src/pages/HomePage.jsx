@@ -156,7 +156,7 @@ const HomePage = () => {
                 <p className="text-white font-bold text-lg shadow-2xl">
                   Weather App
                 </p>
-                <div className="w-full md:w-2/5 relative">
+                <div className="w-full md:w-2/5 ml-5 md:ml-0 relative">
                   <input
                     type="text"
                     onChange={(e) => setQuery(e.target.value)}
